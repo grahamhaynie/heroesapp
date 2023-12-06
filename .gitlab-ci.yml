@@ -1,0 +1,88 @@
+stages:
+  - dependencies
+  - build
+  - test
+  - deploy
+  
+
+# TODO 
+#      - can copy build stuff into image?
+
+install_dependencies:
+  image: node:16-alpine
+  stage: dependencies
+  script:
+    - apk add make
+    - make install
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+
+lint:
+  image: node:16-alpine
+  stage: build
+  before_script:
+    - apk add make
+    - npm link @angular/cli@16.0.5
+    #- ng add @angular-eslint/schematics --skip-confirmation
+  script:
+    - make lint
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull
+
+build_app:
+  image: node:16-alpine
+  stage: build
+  before_script:
+    - apk add make
+    - npm link @angular/cli@16.0.5 
+  script:
+    - make build
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull
+
+test:
+  image: node:16-alpine
+  stage: test
+  before_script:
+    - apk add chromium make
+    - export CHROME_BIN=/usr/bin/chromium-browser
+    - npm link @angular/cli@16.0.5 
+  script:
+    - make test
+  cache:
+    key:
+      files:
+        - package-lock.json
+    paths:
+      - node_modules
+    policy: pull
+
+# different from makefile because can't have privileged runners on csde gitlab
+package:
+  stage: deploy
+  image: quay.io/buildah/stable
+  variables:
+    STORAGE_DRIVER: vfs
+    BUILDAH_FORMAT: docker
+    IMAGE_TAG: $CI_REGISTRY_IMAGE:$CI_COMMIT_SHORT_SHA
+  before_script:
+    - buildah login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - buildah build -t $IMAGE_TAG
+    - buildah push $IMAGE_TAG
+  after_script:
+    - buildah logout $CI_REGISTRY
