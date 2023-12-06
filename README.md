@@ -7,9 +7,10 @@ Can forward ports in vscode
 
 ## TODO
 - make submitting hero show up in heroes list right away
-- have so errors popup in a toast
 - picture upload for new hero and hero detail
+- fix package issues
 - tests
+- backend db
 
 ## Tests todo
 - services

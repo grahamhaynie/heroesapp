@@ -1,5 +1,5 @@
 import { Component, Input } from '@angular/core';
-import { MessageService } from '../message.service';
+import { MessageService } from 'primeng/api';
 import { HeroService } from '../hero.service';
 import { Hero, HeroForm } from '../hero';
 import { Router } from '@angular/router';
@@ -58,7 +58,12 @@ export class HeroFormComponent {
 
         this.heroService.addHero(this.hero)
         .subscribe(() => {
-            this.messageService.add("added hero " + this.hero.name);
+            this.messageService.add({
+              severity: 'success', 
+              summary: `Suscess`,
+              detail: "added hero " + this.hero.name,
+              life: 3000 
+            });
             this.heroService.getHeroes();
         }
         );

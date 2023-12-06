@@ -42,3 +42,7 @@ h1 {
   * {
     font-family: Arial, Helvetica, sans-serif;
   }
+
+@import '~primeng/resources/themes/saga-blue/theme.css';
+@import '~primeng/resources/primeng.min.css';
+@import '~primeicons/primeicons.css';
