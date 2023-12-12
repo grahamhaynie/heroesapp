@@ -1,9 +1,9 @@
 # SecondApp
 
 ## TODO
-- make submitting hero show up in heroes list right away
 - picture upload for new hero and hero detail
 - fix package issues
+- cleanup repos
 - tests
 - backend db
 

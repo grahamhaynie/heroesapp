@@ -65,9 +65,9 @@ export class HeroFormComponent {
               life: 3000 
             });
             this.heroService.getHeroes();
+            this.router.navigateByUrl("/heroes");
         }
         );
-        this.router.navigateByUrl("/heroes");
 
     }
    }
