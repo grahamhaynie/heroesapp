@@ -82,8 +82,9 @@ export class HeroDetailComponent {
       this.hero = this.heroForm.getRawValue();
       this.hero.id = id;
 
-      if(url && this.selectedFile){
-        this.heroService.updateHeroPhoto(this.selectedFile, id)
+      if(this.selectedFile){
+        if(url){
+          this.heroService.updateHeroPhoto(this.selectedFile, id)
           .subscribe(() => {
             this.messageService.add({
               severity: 'success', 
@@ -91,22 +92,27 @@ export class HeroDetailComponent {
               detail: "Updated hero photo",
               life: 3000 
             });
+            this.heroService.updateHero(this.hero)
+            .subscribe(() => this.goBack());
           });
-      } else if(this.selectedFile) { 
-        this.heroService.uploadHeroPhoto(this.selectedFile, id)
+        } else {
+          this.heroService.uploadHeroPhoto(this.selectedFile, id)
           .subscribe(() => {
             this.messageService.add({
               severity: 'success', 
               summary: `Suscess`,
               detail: "Uploaded hero photo",
               life: 3000 
+              
             });
-        });
+            this.heroService.updateHero(this.hero)
+            .subscribe(() => this.goBack());
+          });
+        }
+      } else {
+        this.heroService.updateHero(this.hero)
+        .subscribe(() => this.goBack());
       }
-      
-
-      this.heroService.updateHero(this.hero)
-          .subscribe(() => this.goBack());
       }
   }
 
