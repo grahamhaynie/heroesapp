@@ -1,7 +1,7 @@
 # SecondApp
 
 ## TODO
-- picture upload for new hero and hero detail
+- picture upload for new hero and hero detail - cleanup
 - fix package issues
 - cleanup repo - CI/CD
 - tests

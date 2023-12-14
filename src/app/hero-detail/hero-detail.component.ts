@@ -15,7 +15,8 @@ import { FormBuilder, FormGroup, Validators, FormControl } from '@angular/forms'
 
 export class HeroDetailComponent {
   hero: Hero;
-  heroForm!: FormGroup;
+  heroForm!: FormGroup; // exclamation mark is non null operator - can't be null
+  selectedFile: File | null = null;
 
   constructor(
     private route: ActivatedRoute,
@@ -47,6 +48,21 @@ export class HeroDetailComponent {
     );
   }
 
+  onFileSelect(event: Event) {
+    const element = event.currentTarget as HTMLInputElement;
+    if (element.files && element.files.length > 0) {
+      const file = element.files.item(0);
+  
+      if (file && this.isImageFile(file)) {
+        this.selectedFile = file;
+      }
+    }
+  }
+
+  isImageFile(file: File): boolean {
+    return file.type === 'image/jpeg';
+  }
+
   goBack(): void {
     this.location.back();
   }
@@ -66,8 +82,8 @@ export class HeroDetailComponent {
       this.hero = this.heroForm.getRawValue();
       this.hero.id = id;
 
-      if(url){
-        this.heroService.updateHeroPhoto(this.heroForm.get('image')?.value)
+      if(url && this.selectedFile){
+        this.heroService.updateHeroPhoto(this.selectedFile, id)
           .subscribe(() => {
             this.messageService.add({
               severity: 'success', 
@@ -76,8 +92,8 @@ export class HeroDetailComponent {
               life: 3000 
             });
           });
-      } else { 
-        this.heroService.uploadHeroPhoto(this.heroForm.get('image')?.value)
+      } else if(this.selectedFile) { 
+        this.heroService.uploadHeroPhoto(this.selectedFile, id)
           .subscribe(() => {
             this.messageService.add({
               severity: 'success', 

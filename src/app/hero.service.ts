@@ -18,6 +18,10 @@ export class HeroService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
+  httpPhotoOptions = {
+    headers: new HttpHeaders({ 'Content-Type': 'image/jpeg' })
+  }
+
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
@@ -87,18 +91,15 @@ export class HeroService {
     );
   }
 
-  updateHeroPhoto(photo: File): Observable<File>{
-    return this.http.put<File>(this.heroesUrl + "/photo/" + photo.name, this.httpOptions).pipe(
+  updateHeroPhoto(photo: File, id: number): Observable<File>{
+    return this.http.put<File>(this.heroesUrl + "/photo/" + id + "/" + photo.name, this.httpPhotoOptions).pipe(
       tap(_ => this.log(`uploaded photo`, 'success')),
       catchError(this.handleError<File>('addHero'))
     );
   }
 
-  uploadHeroPhoto(photo: File): Observable<File>{
-
-    // TODO - fix file  
-
-    return this.http.post<File>(this.heroesUrl + "/photo/" + photo.name, photo, this.httpOptions).pipe(
+  uploadHeroPhoto(photo: File, id: number): Observable<File>{
+    return this.http.post<File>(this.heroesUrl + "/photo/" + id + "/"  + photo.name, photo, this.httpPhotoOptions).pipe(
       tap(_ => this.log(`uploaded photo`, 'success')),
       catchError(this.handleError<File>('addHero'))
     );
