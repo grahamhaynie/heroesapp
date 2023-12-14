@@ -87,6 +87,23 @@ export class HeroService {
     );
   }
 
+  updateHeroPhoto(photo: File): Observable<File>{
+    return this.http.put<File>(this.heroesUrl + "/photo/" + photo.name, this.httpOptions).pipe(
+      tap(_ => this.log(`uploaded photo`, 'success')),
+      catchError(this.handleError<File>('addHero'))
+    );
+  }
+
+  uploadHeroPhoto(photo: File): Observable<File>{
+
+    // TODO - fix file  
+
+    return this.http.post<File>(this.heroesUrl + "/photo/" + photo.name, photo, this.httpOptions).pipe(
+      tap(_ => this.log(`uploaded photo`, 'success')),
+      catchError(this.handleError<File>('addHero'))
+    );
+  }
+
   /** DELETE: delete the hero from the server */
   deleteHero(id: number): Observable<Hero> {
     const url = `${this.heroesUrl}/${id}`;

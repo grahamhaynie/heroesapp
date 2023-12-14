@@ -3,9 +3,8 @@
 ## TODO
 - picture upload for new hero and hero detail
 - fix package issues
-- cleanup repos
+- cleanup repo - CI/CD
 - tests
-- backend db
 
 ## Tests todo
 - services
