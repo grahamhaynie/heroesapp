@@ -18,10 +18,6 @@ export class HeroService {
     headers: new HttpHeaders({ 'Content-Type': 'application/json' })
   };
 
-  httpPhotoOptions = {
-    headers: new HttpHeaders({ 'Content-Type': 'image/jpeg' })
-  }
-
   constructor(
     private http: HttpClient,
     private messageService: MessageService) { }
@@ -91,17 +87,35 @@ export class HeroService {
     );
   }
 
-  updateHeroPhoto(photo: File, id: number): Observable<File>{
-    return this.http.put<File>(this.heroesUrl + "/photo/" + id + "/" + photo.name, this.httpPhotoOptions).pipe(
+  updateHeroPhoto(photo: File, id: number): Observable<string>{
+
+    // TODO - change to form data
+    // TODO - fix headers
+
+    const headers = new HttpHeaders({
+      'Content-Type': photo.type // Set the content-type to the file's MIME type
+    });
+    console.log({ headers: headers });
+
+    // TODO - fix the photo not bein in the response....
+
+    return this.http.put<{url: string}>(`${this.heroesUrl}/photo/${id}/${photo.name}`, photo,{ headers: headers }).pipe(
+      map(response => response.url),
       tap(_ => this.log(`uploaded photo`, 'success')),
-      catchError(this.handleError<File>('addHero'))
+      catchError(this.handleError<string>('addHero'))
     );
   }
 
-  uploadHeroPhoto(photo: File, id: number): Observable<File>{
-    return this.http.post<File>(this.heroesUrl + "/photo/" + id + "/"  + photo.name, photo, this.httpPhotoOptions).pipe(
+  uploadHeroPhoto(photo: File, id: number): Observable<string>{
+    const headers = new HttpHeaders({
+      'Content-Type': photo.type // Set the content-type to the file's MIME type
+    });
+    console.log({ headers: headers });
+
+    return this.http.post<{url: string}>(`${this.heroesUrl}/photo/${id}/${photo.name}`, photo, { headers: headers } ).pipe(
+      map(response => response.url),
       tap(_ => this.log(`uploaded photo`, 'success')),
-      catchError(this.handleError<File>('addHero'))
+      catchError(this.handleError<string>('addHero'))
     );
   }
 
