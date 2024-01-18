@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Hero } from './hero';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { MessageService } from 'primeng/api';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -87,35 +87,19 @@ export class HeroService {
     );
   }
 
-  updateHeroPhoto(photo: File, id: number): Observable<string>{
-
-    // TODO - change to form data
-    // TODO - fix headers
-
-    const headers = new HttpHeaders({
-      'Content-Type': photo.type // Set the content-type to the file's MIME type
-    });
-    console.log({ headers: headers });
-
-    // TODO - fix the photo not bein in the response....
-
-    return this.http.put<{url: string}>(`${this.heroesUrl}/photo/${id}/${photo.name}`, photo,{ headers: headers }).pipe(
+  uploadHeroPhoto(photo: File, id: number): Observable<string> {
+    if (!photo.type.startsWith('image/')) {
+      // Return an Observable that immediately errors out
+      return throwError(() => new Error('Invalid file type. Please upload an image.'));
+    }
+  
+    const formData = new FormData();
+    formData.append('photo', photo, photo.name);
+  
+    return this.http.post<{url: string}>(`${this.heroesUrl}/photo/${id}`, formData).pipe(
       map(response => response.url),
       tap(_ => this.log(`uploaded photo`, 'success')),
-      catchError(this.handleError<string>('addHero'))
-    );
-  }
-
-  uploadHeroPhoto(photo: File, id: number): Observable<string>{
-    const headers = new HttpHeaders({
-      'Content-Type': photo.type // Set the content-type to the file's MIME type
-    });
-    console.log({ headers: headers });
-
-    return this.http.post<{url: string}>(`${this.heroesUrl}/photo/${id}/${photo.name}`, photo, { headers: headers } ).pipe(
-      map(response => response.url),
-      tap(_ => this.log(`uploaded photo`, 'success')),
-      catchError(this.handleError<string>('addHero'))
+      catchError(this.handleError<string>('uploadHeroPhoto'))
     );
   }
 

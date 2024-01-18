@@ -83,36 +83,22 @@ export class HeroDetailComponent {
       this.hero.id = id;
 
       if(this.selectedFile){
-        if(url){
-          this.heroService.updateHeroPhoto(this.selectedFile, id)
-          .subscribe((url) => {
-            console.log(url);
-            this.messageService.add({
-              severity: 'success', 
-              summary: `Suscess`,
-              detail: "Updated hero photo",
-              life: 3000 
-            });
-            this.hero.photoURL = url;
-            this.heroService.updateHero(this.hero)
-            .subscribe(() => this.goBack());
+
+        this.heroService.uploadHeroPhoto(this.selectedFile, id)
+        .subscribe((url) => {
+          console.log(url);
+          this.messageService.add({
+            severity: 'success', 
+            summary: `Suscess`,
+            detail: "Uploaded hero photo",
+            life: 3000 
+            
           });
-        } else {
-          this.heroService.uploadHeroPhoto(this.selectedFile, id)
-          .subscribe((url) => {
-            console.log(url);
-            this.messageService.add({
-              severity: 'success', 
-              summary: `Suscess`,
-              detail: "Uploaded hero photo",
-              life: 3000 
-              
-            });
-            this.hero.photoURL = url;
-            this.heroService.updateHero(this.hero)
-            .subscribe(() => this.goBack());
-          });
-        }
+          this.hero.photoURL = url;
+          this.heroService.updateHero(this.hero)
+          .subscribe(() => this.goBack());
+        });
+        
       } else {
         this.heroService.updateHero(this.hero)
         .subscribe(() => this.goBack());
